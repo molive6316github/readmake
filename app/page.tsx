@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { signIn, useSession } from "next-auth/react";
 import Editor, { OnMount } from "@monaco-editor/react";
 import Preview from "@/components/Preview";
 import SnippetDrawer from "@/components/SnippetDrawer";
@@ -25,6 +26,11 @@ myPackage.doSomething();
 `;
 
 const DRAWER_HEIGHT = 280;
+
+const GITHUB_AUTO_FILL: Record<string, (session: any) => string> = {
+  "{user}": (s) => s?.user?.login || "",
+  "{name}": (s) => s?.user?.name || "",
+};
 
 function extractPlaceholders(snippet: string): string[] {
   const matches = snippet.match(/\{([^}]+)\}/g) || [];
@@ -120,6 +126,7 @@ function PlaceholderPopup({ placeholders, onConfirm, onCancel }: PlaceholderPopu
 }
 
 export default function Home() {
+  const { data: session } = useSession();
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const [markdown, setMarkdown] = useState(INITIAL_MD);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -144,12 +151,21 @@ export default function Home() {
   };
 
   const insertSnippet = (snippet: string) => {
-    const found = extractPlaceholders(snippet);
+    // autofill github placeholders if session exists
+    let prefilled = snippet;
+    if (session) {
+      for (const [placeholder, getter] of Object.entries(GITHUB_AUTO_FILL)) {
+        const val = getter(session);
+        if (val) prefilled = prefilled.replaceAll(placeholder, val);
+      }
+    }
+
+    const found = extractPlaceholders(prefilled);
     if (found.length > 0) {
-      setPendingSnippet(snippet);
+      setPendingSnippet(prefilled);
       setPlaceholders(found);
     } else {
-      doInsert(snippet);
+      doInsert(prefilled);
     }
   };
 
@@ -189,12 +205,15 @@ export default function Home() {
             }}>
             {drawerOpen ? "✕ close snippets" : "⊞ snippets"}
           </button>
-          <button style={{
-            background: "var(--surface2)", border: "1px solid var(--border)",
-            color: "var(--muted)", fontSize: 12, borderRadius: 6,
-            padding: "5px 12px", cursor: "pointer",
-          }}>
-            Connect GitHub
+          <button
+            onClick={() => !session && signIn("github")}
+            style={{
+              background: "var(--surface2)", border: "1px solid var(--border)",
+              color: session ? "var(--accent)" : "var(--muted)", fontSize: 12, borderRadius: 6,
+              padding: "5px 12px", cursor: session ? "default" : "pointer",
+              transition: "all 0.2s",
+            }}>
+            {session ? `✓ ${session.user?.name}` : "Connect GitHub"}
           </button>
           <button style={{
             background: "var(--accent)", color: "#000", fontSize: 12,
