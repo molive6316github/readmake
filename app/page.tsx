@@ -39,17 +39,23 @@ function extractPlaceholders(snippet: string): string[] {
 
 type Repo = { full_name: string; name: string; owner: { login: string } };
 
-function RepoPicker({ onSelect, onClose }: { onSelect: (repo: Repo) => void; onClose: () => void }) {
+function RepoPicker({ onSelect, onClose, session }: {
+  onSelect: (repo: Repo) => void;
+  onClose: () => void;
+  session: any;
+}) {
   const [repos, setRepos] = useState<Repo[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/github/repos").then(r => r.json()).then(data => {
+    fetch("/api/github/repos", {
+      headers: { Authorization: `Bearer ${session?.accessToken}` }
+    }).then(r => r.json()).then(data => {
       setRepos(Array.isArray(data) ? data : []);
       setLoading(false);
     });
-  }, []);
+  }, [session]);
 
   const filtered = repos.filter(r => r.full_name.toLowerCase().includes(search.toLowerCase()));
 
@@ -240,7 +246,6 @@ export default function Home() {
 
   const handleExport = async () => {
     if (!session) {
-      // download
       const blob = new Blob([markdown], { type: "text/markdown" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -255,7 +260,10 @@ export default function Home() {
     try {
       const res = await fetch("/api/github/push", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${(session as any)?.accessToken}`,
+        },
         body: JSON.stringify({ owner: selectedRepo.owner.login, repo: selectedRepo.name, content: markdown }),
       });
       if (res.ok) showToast(`pushed to ${selectedRepo.full_name}`, true);
@@ -371,6 +379,7 @@ export default function Home() {
         <RepoPicker
           onSelect={(repo) => { setSelectedRepo(repo); setShowRepoPicker(false); }}
           onClose={() => setShowRepoPicker(false)}
+          session={session}
         />
       )}
 
