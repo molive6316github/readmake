@@ -11,11 +11,13 @@ export async function POST(req: Request) {
     const existing = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/README.md`, {
       headers: { Authorization: auth }
     });
-    if (existing.ok) {
-      const data = await existing.json();
-      sha = data.sha;
+    const existingData = await existing.json();
+    if (existing.ok && existingData.sha) {
+      sha = existingData.sha;
     }
-  } catch {}
+  } catch (e) {
+    console.error("SHA fetch error:", e);
+  }
 
   const body: any = {
     message: "docs: update README via readmake",
@@ -29,6 +31,9 @@ export async function POST(req: Request) {
     body: JSON.stringify(body),
   });
 
-  if (!res.ok) return NextResponse.json({ error: await res.json() }, { status: 400 });
+  const resData = await res.json();
+  console.error("GitHub push response:", JSON.stringify(resData));
+
+  if (!res.ok) return NextResponse.json({ error: resData }, { status: 400 });
   return NextResponse.json({ ok: true });
 }
