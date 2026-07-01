@@ -14,7 +14,7 @@
 
 ## Usage
 
-#### visit [readmake](https://readmake.vercel.app )
+#### visit [readmake](https://readmake.vercel.app ), connect your repo, use the snippets to your hearts desire, and push to github. 
 
 
 
