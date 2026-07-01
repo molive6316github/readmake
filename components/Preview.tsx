@@ -1,13 +1,12 @@
 "use client";
-
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 
 export default function Preview({ markdown }: { markdown: string }) {
   return (
-    <div className="flex flex-col w-1/2 overflow-hidden">
-      <div style={{ borderBottom: "1px solid var(--border)", background: "var(--surface)" }}
-        className="flex items-center px-4 py-2 shrink-0">
+    <div className="preview-side flex flex-col w-1/2 overflow-hidden">
+      <div className="tab-bar flex items-center px-4 py-2 shrink-0"
+        style={{ borderBottom: "1px solid var(--border)", background: "var(--surface)" }}>
         <span style={{ color: "var(--muted)", fontSize: 11, letterSpacing: "0.06em" }} className="uppercase">
           Preview
         </span>
