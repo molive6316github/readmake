@@ -71,12 +71,9 @@ function RepoPicker({ onSelect, onClose, session }: {
         boxShadow: "0 24px 64px rgba(0,0,0,0.6)",
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-          <p style={{ fontFamily: "Instrument Serif", fontSize: 20, color: "var(--text)", margin: 0 }}>
-            Pick a repo
-          </p>
+          <p style={{ fontFamily: "Instrument Serif", fontSize: 20, color: "var(--text)", margin: 0 }}>Pick a repo</p>
           <button onClick={onClose} style={{ background: "none", border: "none", color: "var(--muted)", cursor: "pointer", fontSize: 16 }}>✕</button>
         </div>
-
         <input
           autoFocus
           placeholder="Search repos..."
@@ -89,7 +86,6 @@ function RepoPicker({ onSelect, onClose, session }: {
             outline: "none", fontFamily: "Geist, sans-serif", marginBottom: 12,
           }}
         />
-
         <div style={{ maxHeight: 300, overflowY: "auto", display: "flex", flexDirection: "column", gap: 4 }}>
           {loading && <p style={{ color: "var(--muted)", fontSize: 13, textAlign: "center", padding: 20 }}>Loading...</p>}
           {!loading && filtered.length === 0 && <p style={{ color: "var(--muted)", fontSize: 13, textAlign: "center", padding: 20 }}>No repos found</p>}
@@ -176,7 +172,7 @@ function Toast({ message, ok }: { message: string; ok: boolean }) {
     <div style={{
       position: "fixed", bottom: 24, right: 24, zIndex: 200,
       background: ok ? "var(--accent)" : "#ef4444",
-      color: ok ? "#fff" : "#000",
+      color: "#fff",
       borderRadius: 8, padding: "10px 16px", fontSize: 13, fontWeight: 500,
       boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
       animation: "slideUp 0.2s ease",
@@ -266,7 +262,7 @@ export default function Home() {
         },
         body: JSON.stringify({ owner: selectedRepo.owner.login, repo: selectedRepo.name, content: markdown }),
       });
-      if (res.ok) showToast(`pushed to ${selectedRepo.full_name}`, true);
+      if (res.ok) showToast(`pushed to ${selectedRepo.full_name} ✓`, true);
       else showToast("push failed", false);
     } catch {
       showToast("push failed", false);
@@ -321,13 +317,15 @@ export default function Home() {
 
       <div className="flex overflow-hidden transition-all duration-300"
         style={{ flex: 1, marginBottom: drawerOpen ? DRAWER_HEIGHT : 0 }}>
-        <div className="flex flex-col w-1/2 overflow-hidden" style={{ borderRight: "1px solid var(--border)" }}>
-          <div style={{ borderBottom: "1px solid var(--border)", background: "var(--surface)" }}
-            className="flex items-center gap-2 px-4 py-2 shrink-0">
+
+        {/* editor side — warm */}
+        <div className="editor-side flex flex-col w-1/2 overflow-hidden">
+          <div className="tab-bar flex items-center gap-2 px-4 py-2 shrink-0"
+            style={{ borderBottom: "1px solid var(--border)", background: "var(--surface)" }}>
             <div className="flex gap-1.5">
-              <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#ff5f57" }} />
-              <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#ffbd2e" }} />
-              <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#27c840" }} />
+              <div className="dot-red" style={{ width: 10, height: 10, borderRadius: "50%", background: "#ff5f57" }} />
+              <div className="dot-yellow" style={{ width: 10, height: 10, borderRadius: "50%", background: "#ffbd2e" }} />
+              <div className="dot-green" style={{ width: 10, height: 10, borderRadius: "50%", background: "#27c840" }} />
             </div>
             <span style={{ color: "var(--muted)", fontSize: 11, marginLeft: 8, letterSpacing: "0.06em" }} className="uppercase">
               README.md
@@ -358,6 +356,8 @@ export default function Home() {
             }}
           />
         </div>
+
+        {/* preview side — cool */}
         <Preview markdown={markdown} />
       </div>
 
