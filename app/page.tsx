@@ -164,7 +164,7 @@ function PlaceholderPopup({ placeholders, onConfirm, onCancel }: {
         </div>
         <div style={{ display: "flex", gap: 8, marginTop: 20, justifyContent: "flex-end" }}>
           <button onClick={onCancel} style={{ background: "none", border: "1px solid var(--border)", color: "var(--muted)", borderRadius: 6, padding: "6px 14px", fontSize: 12, cursor: "pointer" }}>Cancel</button>
-          <button onClick={() => onConfirm(values)} style={{ background: "var(--accent)", border: "none", color: "#000", borderRadius: 6, padding: "6px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Insert</button>
+          <button onClick={() => onConfirm(values)} style={{ background: "var(--accent)", border: "none", color: "#fff", borderRadius: 6, padding: "6px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Insert</button>
         </div>
       </div>
     </div>
@@ -176,7 +176,7 @@ function Toast({ message, ok }: { message: string; ok: boolean }) {
     <div style={{
       position: "fixed", bottom: 24, right: 24, zIndex: 200,
       background: ok ? "var(--accent)" : "#ef4444",
-      color: ok ? "#000" : "#fff",
+      color: ok ? "#fff" : "#000",
       borderRadius: 8, padding: "10px 16px", fontSize: 13, fontWeight: 500,
       boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
       animation: "slideUp 0.2s ease",
@@ -310,7 +310,7 @@ export default function Home() {
             {session ? `✓ ${session.user?.name}` : "Connect GitHub"}
           </button>
           <button onClick={handleExport} style={{
-            background: "var(--accent)", color: "#000", fontSize: 12,
+            background: "var(--accent)", color: "#fff", fontSize: 12,
             fontWeight: 600, borderRadius: 6, padding: "5px 14px",
             cursor: "pointer", border: "none",
           }}>
