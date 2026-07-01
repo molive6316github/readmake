@@ -3,15 +3,16 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  --bg: #0c0c0d;
-  --surface: #131315;
-  --surface2: #1a1a1d;
-  --border: #242428;
-  --border2: #2f2f35;
-  --text: #e8e8ea;
-  --muted: #52525e;
-  --accent: #f5a623;
-  --accent-dim: rgba(245, 166, 35, 0.12);
+  --bg: #0e0e11;
+  --surface: #13131a;
+  --surface2: #18181f;
+  --border: #21212c;
+  --border2: #2c2c3a;
+  --text: #e2e2ea;
+  --muted: #55556a;
+  --accent: #a78bfa;
+  --accent-dim: rgba(167, 139, 250, 0.08);
+  --accent-glow: rgba(167, 139, 250, 0.18);
 }
 
 * { box-sizing: border-box; }
@@ -23,33 +24,63 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-::-webkit-scrollbar { width: 4px; height: 4px; }
+/* soft radial glow at top */
+body::before {
+  content: '';
+  position: fixed;
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 400px;
+  background: radial-gradient(ellipse, rgba(167, 139, 250, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+::-webkit-scrollbar { width: 3px; height: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 
 .snippet-card {
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  transition: all 0.15s ease;
 }
 .snippet-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-  border-color: var(--border2);
+  border-color: var(--accent) !important;
+  background: var(--accent-dim) !important;
+  transform: translateY(-1px);
 }
 .snippet-card:active {
   transform: scale(0.97);
+  opacity: 0.8;
 }
 
-.drawer-open { animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.drawer-open {
+  animation: slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
 @keyframes slideUp {
-  from { transform: translateY(100%); opacity: 0; }
+  from { transform: translateY(16px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
 
-.insert-flash {
-  animation: flash 0.4s ease;
-}
+.insert-flash { animation: flash 0.35s ease; }
 @keyframes flash {
   0% { background: var(--accent-dim); }
   100% { background: transparent; }
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px var(--accent-glow) !important;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+header {
+  animation: fadeUp 0.25s ease forwards;
 }
